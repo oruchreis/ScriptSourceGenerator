@@ -10,6 +10,13 @@ This geneator can compile and run `csx` files and generate files from csx script
 var httpClient = new HttpClient();
 var result = await client.GetStringAsync("http://www.github.com");
 ```
+- Change `.csx` file `Build Action` property to `C# analyzer additional file` or modify csproj like this:
+```xml
+<ItemGroup>
+	<None Remove="MyScript.csx" />
+	<AdditionalFiles Include="MyScript.csx" />
+</ItemGroup>
+```
 - If you want to create files as an output, you can use global `Output` indexer property which is a `StringBuilder`:
 ```csharp
 Output["Github.html"].Append(result);
