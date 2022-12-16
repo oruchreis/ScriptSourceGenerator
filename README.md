@@ -71,3 +71,30 @@ var openApiDocument = new OpenApiStreamReader().Read(stream, out var diagnostic)
 var outputString = openApiDocument.Serialize(OpenApiSpecVersion.OpenApi2_0, OpenApiFormat.Json);
 Output["GeneratedModels.cs"].Append(outputString);
 ```
+- External csx files can be imported with `#load` directive
+```csharp
+#load "NetStandard20Fixes.csx"
+#r "nuget: NSwag.Core.Yaml/13.18.0"
+#r "nuget: NSwag.CodeGeneration.CSharp/13.18.0"            
+#r "System.Net.Http"
+using System.Net.Http;
+using NJsonSchema.Generation;
+using NJsonSchema.Yaml;
+using NSwag;
+using NSwag.CodeGeneration.CSharp;
+
+string yaml;
+using (var httpClient = new HttpClient())
+    yaml = await httpClient.GetStringAsync("https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml");
+
+var openApiDocument = await OpenApiYamlDocument.FromYamlAsync(yaml);
+
+var settings = new CSharpClientGeneratorSettings
+{    
+
+};
+
+var generator = new CSharpClientGenerator(openApiDocument, settings);    
+
+Output["g.cs"].Append(generator.GenerateFile());
+```

@@ -65,26 +65,29 @@ public partial class CsxSourceGenerator
                 var packageId = match.Groups["packageid"].Value;
                 var version = new NuGetVersion(match.Groups["version"].Value);
                 var packageIdentity = new PackageIdentity(packageId, version);
-                var nugetReferences = GetNugetReferences(packageIdentity);
-                Debug.WriteLine(string.Join("\n", nugetReferences));
+                var nugetReferences = GetNugetReferences(packageIdentity, new HashSet<PackageIdentity>(), baseFilePath, properties);
+                Debug.WriteLine(string.Join("\n", nugetReferences.Select(pr => pr.FilePath)));
 
                 foreach (var dependency in nugetReferences.Distinct()
-                    .Skip(1)
-                    .Select(i => MetadataReference.CreateFromFile(i)))
+                    .Skip(1))
                 {
                     _dependenciesOutput[dependency.FilePath!] = dependency;
                 }
 
                 return nugetReferences.Distinct()
-                    .Take(1) //https://github.com/dotnet/roslyn/blob/6392f2f2d3106ac250e7dcc3b9a54478330add09/src/Compilers/Core/Portable/ReferenceManager/CommonReferenceManager.Resolution.cs#L885
-                    .Select(i => MetadataReference.CreateFromFile(i))
+                    .Take(1) //https://github.com/dotnet/roslyn/blob/6392f2f2d3106ac250e7dcc3b9a54478330add09/src/Compilers/Core/Portable/ReferenceManager/CommonReferenceManager.Resolution.cs#L885                    
                     .ToImmutableArray();
             }
             return _defaultReferenceResolver.ResolveReference(reference, baseFilePath, properties);
         }
 
-        private IEnumerable<string> GetNugetReferences(PackageIdentity packageIdentity)
+        private IEnumerable<PortableExecutableReference> GetNugetReferences(PackageIdentity packageIdentity, HashSet<PackageIdentity> loadedDependencies, string? baseFilePath, MetadataReferenceProperties properties)
         {
+            var resolvedRefs = _defaultReferenceResolver.ResolveReference(packageIdentity.Id, baseFilePath, properties);
+            if (resolvedRefs.Any())
+                return resolvedRefs;
+
+            loadedDependencies.Add(packageIdentity);
             var package = GlobalPackagesFolderUtility.GetPackage(packageIdentity, _globalPackagesFolder);
             try
             {
@@ -100,7 +103,9 @@ public partial class CsxSourceGenerator
                 }
 
                 //dependencies
-                var dependencies = package.PackageReader.GetPackageDependencies().SelectMany(dg => dg.Packages.SelectMany(dep => GetNugetReferences(new PackageIdentity(dep.Id, dep.VersionRange.MinVersion))));
+                var dependencies = package.PackageReader.GetPackageDependencies().SelectMany(dg => 
+                    dg.Packages.Where(dep => !loadedDependencies.Contains(new PackageIdentity(dep.Id, dep.VersionRange.MinVersion)))
+                    .SelectMany(dep => GetNugetReferences(new PackageIdentity(dep.Id, dep.VersionRange.MinVersion), loadedDependencies, baseFilePath, properties)));
 
                 var frameworkItems = package.PackageReader.GetReferenceItems();
                 var nearest = _frameworkReducer.GetNearest(_nugetFramework, frameworkItems.Select(x => x.TargetFramework));
@@ -108,7 +113,9 @@ public partial class CsxSourceGenerator
                 return frameworkItems
                         .Where(x => x.TargetFramework.Equals(nearest))
                         .SelectMany(x => x.Items.Select(i => Path.Combine(installPath, i)))
-                        .Union(dependencies);
+                        .Select(i => MetadataReference.CreateFromFile(i))
+                        .Union(dependencies)
+                        .ToList();
             }
             finally
             {
