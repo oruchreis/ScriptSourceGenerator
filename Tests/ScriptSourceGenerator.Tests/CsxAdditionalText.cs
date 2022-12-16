@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using System.Diagnostics;
+using System.Text;
 
 namespace ScriptSourceGenerator.Test;
 
@@ -18,5 +19,5 @@ internal class CsxAdditionalText : AdditionalText
 
     public override string Path => _path;
 
-    public override SourceText? GetText(CancellationToken cancellationToken = default) => SourceText.From(_content);
+    public override SourceText? GetText(CancellationToken cancellationToken = default) => SourceText.From(_content, Encoding.UTF8);
 }
