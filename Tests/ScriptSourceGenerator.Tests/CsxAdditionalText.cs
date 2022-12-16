@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using System.Diagnostics;
 
 namespace ScriptSourceGenerator.Test;
 
@@ -10,6 +11,7 @@ internal class CsxAdditionalText : AdditionalText
 
     public CsxAdditionalText(string path, string content)
     {
+        Debug.WriteLine($"Csx File Created: {path}");
         _content = content;
         _path = path;
     }

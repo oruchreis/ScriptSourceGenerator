@@ -71,3 +71,8 @@ var openApiDocument = new OpenApiStreamReader().Read(stream, out var diagnostic)
 var outputString = openApiDocument.Serialize(OpenApiSpecVersion.OpenApi2_0, OpenApiFormat.Json);
 Output["GeneratedModels.cs"].Append(outputString);
 ```
+- External csx files can be imported with `#load` directive
+```
+#load "AnotherFile.csx"
+using AnotherNamespace.In.AnotherFile;
+```
