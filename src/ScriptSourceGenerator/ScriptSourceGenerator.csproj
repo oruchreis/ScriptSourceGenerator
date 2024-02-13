@@ -31,12 +31,12 @@
 		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.4.0" />
 		<!-- Generator dependencies -->
-		<PackageReference Include="NuGet.Configuration" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Configuration" Version="6.4.3" GeneratePathProperty="true" PrivateAssets="all" />
 		<PackageReference Include="NuGet.Protocol" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Frameworks" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Packaging" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Common" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Versioning" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Frameworks" Version="6.4.3" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Packaging" Version="6.4.3" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Common" Version="6.4.3" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Versioning" Version="6.4.3" GeneratePathProperty="true" PrivateAssets="all" />
 	</ItemGroup>
 
 	<!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->
