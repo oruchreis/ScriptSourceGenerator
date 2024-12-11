@@ -40,7 +40,10 @@ public partial class CsxSourceGenerator : IIncrementalGenerator
                 var dependencies = new ConcurrentDictionary<string, MetadataReference>();
                 var resolver = new NugetPackageReferenceResolver(ScriptOptions.Default.MetadataResolver, dependencies);
 
-                var syntaxTree = CSharpSyntaxTree.ParseText(content);
+                var syntaxTree = CSharpSyntaxTree.ParseText(content, CSharpParseOptions.Default
+                    .WithLanguageVersion(LanguageVersion.Latest)
+                    .WithKind(SourceCodeKind.Script),
+                    text.Path ?? "", Encoding.UTF8);
                 var imports = syntaxTree.GetCompilationUnitRoot().Usings.Select(u => u.Name.ToString()).ToList();
                 var directive = syntaxTree.GetRoot().GetFirstDirective();
                 while (directive != null)
@@ -65,7 +68,7 @@ public partial class CsxSourceGenerator : IIncrementalGenerator
                     .WithReferences(dependencies.Values)
                     .WithSourceResolver(new SourceFileResolver(new string[] { }, classFileDir)),
                     typeof(Globals));
-
+                
                 var diagnostics = script.Compile();
                 if (diagnostics.Length > 0)
                 {
@@ -78,7 +81,14 @@ public partial class CsxSourceGenerator : IIncrementalGenerator
                 }
 
                 var globals = new Globals();
-                var result = script.RunAsync(globals: globals).Result;
+                try
+                {
+                    var result = script.RunAsync(globals: globals).Result;
+                }
+                catch (Exception e)
+                {
+                    spc.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("CSX0002", "Runtime Error", e.Message, "ScriptSourceGenerator", DiagnosticSeverity.Error, true, e.ToString(), e.HelpLink), null));
+                }                
 
                 foreach (var (fileName, outputContent) in globals.Output)
                 {
@@ -87,7 +97,7 @@ public partial class CsxSourceGenerator : IIncrementalGenerator
             }
             catch (Exception e)
             {
-                spc.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("CSX 0001", "Internal Error", e.Message, "ScriptSourceGenerator", DiagnosticSeverity.Error, true, e.ToString(), e.HelpLink), null));
+                spc.ReportDiagnostic(Diagnostic.Create(new DiagnosticDescriptor("CSX0001", "Internal Error", e.Message, "ScriptSourceGenerator", DiagnosticSeverity.Error, true, e.ToString(), e.HelpLink), null));
             }
         });
     }

@@ -9,6 +9,6 @@ public static class ModuleInitializer
     public static void Init()
     {
         DiffTools.UseOrder(DiffTool.VisualStudio, DiffTool.WinMerge, DiffTool.VisualStudioCode);
-        VerifySourceGenerators.Enable();
+        VerifySourceGenerators.Initialize();
     }
 }

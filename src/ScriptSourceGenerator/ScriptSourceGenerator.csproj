@@ -12,9 +12,9 @@
 		<Title>ScriptSourceGenerator</Title>
 		<Description>Generates files from csx scripts.</Description>
 		<PackageTags>csx source generator templating</PackageTags>
-		<Version>1.0.6</Version>
-		<AssemblyVersion>1.0.6</AssemblyVersion>
-		<FileVersion>1.0.6</FileVersion>
+		<Version>1.0.7</Version>
+		<AssemblyVersion>1.0.7</AssemblyVersion>
+		<FileVersion>1.0.7</FileVersion>
 		<Authors>oruchreis</Authors>
 		<Copyright>oruchreis</Copyright>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
@@ -27,16 +27,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.4.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.12.0" />
 		<!-- Generator dependencies -->
-		<PackageReference Include="NuGet.Configuration" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Protocol" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Frameworks" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Packaging" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Common" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
-		<PackageReference Include="NuGet.Versioning" Version="6.4.0" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Configuration" Version="6.12.1" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Protocol" Version="6.12.1" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Frameworks" Version="6.12.1" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Packaging" Version="6.12.1" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Common" Version="6.12.1" GeneratePathProperty="true" PrivateAssets="all" />
+		<PackageReference Include="NuGet.Versioning" Version="6.12.1" GeneratePathProperty="true" PrivateAssets="all" />
 	</ItemGroup>
 
 	<!-- This ensures the library will be packaged as a source generator when we use `dotnet pack` -->

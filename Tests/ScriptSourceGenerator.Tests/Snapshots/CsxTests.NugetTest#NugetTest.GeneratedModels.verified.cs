@@ -61,8 +61,21 @@
         ],
         "summary": "Create a pet",
         "operationId": "createPets",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Pet"
+            }
+          }
         ],
         "responses": {
           "201": {

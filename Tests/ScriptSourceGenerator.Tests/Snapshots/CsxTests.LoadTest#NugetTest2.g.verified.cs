@@ -148,9 +148,9 @@ namespace MyNamespace
         /// </summary>
         /// <returns>Null response</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task CreatePetsAsync()
+        public virtual System.Threading.Tasks.Task CreatePetsAsync(Pet body)
         {
-            return CreatePetsAsync(System.Threading.CancellationToken.None);
+            return CreatePetsAsync(body, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
@@ -159,8 +159,11 @@ namespace MyNamespace
         /// </summary>
         /// <returns>Null response</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task CreatePetsAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task CreatePetsAsync(Pet body, System.Threading.CancellationToken cancellationToken)
         {
+            if (body == null)
+                throw new System.ArgumentNullException("body");
+
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append(BaseUrl != null ? BaseUrl.TrimEnd('/') : "").Append("/pets");
 
@@ -170,7 +173,10 @@ namespace MyNamespace
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    var json_ = Newtonsoft.Json.JsonConvert.SerializeObject(body, _settings.Value);
+                    var content_ = new System.Net.Http.StringContent(json_);
+                    content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
+                    request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
 
                     PrepareRequest(client_, request_, urlBuilder_);

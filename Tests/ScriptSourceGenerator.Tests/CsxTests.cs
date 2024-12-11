@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace ScriptSourceGenerator.Test;
 
 [TestClass]
+[DeploymentItem("NetStandard20Fixes.csx")]
 public class CsxTests : VerifyBase
 {
     private Task VerifyCsx(params (string path, string content)[] files)
@@ -16,9 +17,10 @@ public class CsxTests : VerifyBase
         // The GeneratorDriver is used to run our generator against a compilation
         var driver = CSharpGeneratorDriver.Create(generator)
             .AddAdditionalTexts(files.Select(f => new CsxAdditionalText(f.path, f.content)).Cast<AdditionalText>().Union(
-                new[] {
-                    new CsxAdditionalText(Path.Combine(TestContext.TestDeploymentDir,"NetStandard20Fixes.csx"),
-                    File.ReadAllText(Path.Combine(TestContext.TestDeploymentDir,"NetStandard20Fixes.csx"))) }).ToImmutableArray())
+                [
+                    new CsxAdditionalText(Path.Combine(TestContext.DeploymentDirectory,"NetStandard20Fixes.csx"),
+                        File.ReadAllText(Path.Combine(TestContext.DeploymentDirectory,"NetStandard20Fixes.csx"))) 
+                ]).ToImmutableArray())
             .RunGenerators(CSharpCompilation.Create("test"));
         // Use verify to snapshot test the source generator output!        
         return Verify(driver)
@@ -53,7 +55,7 @@ test content 2
                 BaseAddress = new Uri("https://raw.githubusercontent.com/OAI/OpenAPI-Specification/")
             };
 
-            var stream = await httpClient.GetStreamAsync("master/examples/v3.0/petstore.yaml");
+            var stream = await httpClient.GetStreamAsync("refs/heads/main/tests/v3.0/pass/petstore.yaml");
 
             // Read V3 as YAML
             var openApiDocument = new OpenApiStreamReader().Read(stream, out var diagnostic);
@@ -67,7 +69,7 @@ test content 2
     [TestMethod]
     public Task LoadTest()
     {
-        return VerifyCsx((Path.Combine(TestContext.TestDeploymentDir, "NugetTest2.csx"), """"            
+        return VerifyCsx((Path.Combine(TestContext.DeploymentDirectory, "NugetTest2.csx"), """"            
             #load "NetStandard20Fixes.csx"
             #r "nuget: NSwag.Core.Yaml/13.18.0"
             #r "nuget: NSwag.CodeGeneration.CSharp/13.18.0"            
@@ -80,7 +82,7 @@ test content 2
 
             string yaml;
             using (var httpClient = new HttpClient())
-                yaml = await httpClient.GetStringAsync("https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v3.0/petstore.yaml");
+                yaml = await httpClient.GetStringAsync("https://raw.githubusercontent.com/OAI/OpenAPI-Specification/refs/heads/main/tests/v3.0/pass/petstore.yaml");
 
             var openApiDocument = await OpenApiYamlDocument.FromYamlAsync(yaml);
 

@@ -28,9 +28,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: |
-            6.x
-    - name: Test .NET 6
-      run: dotnet test -v normal -f net6.0 --logger "console;verbosity=detailed" --nologo /nologo      
+            9.x
+    - name: Test .NET 9
+      run: dotnet test -v normal -f net9.0 --logger "console;verbosity=detailed" --nologo /nologo      
       
   upload-packages:
     needs: [ubuntu-test] 
@@ -48,7 +48,7 @@ jobs:
     - name: Setup .NET Sdk
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.x'
+        dotnet-version: '9.x'
     - name: Publish Nuget Package
       uses: alirezanet/publish-nuget@v3.0.4
       with:
